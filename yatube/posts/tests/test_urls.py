@@ -10,27 +10,27 @@ class PostURLTests(TestCase):
         super().setUpClass()
         cls.user = User.objects.create(username="NoName")
         cls.group = Group.objects.create(
-            title="Тестовая группа",
-            slug="test-slug",
-            description="Тестовое описание",
+            title='Тестовая группа',
+            slug='test-slug',
+            description='Тестовое описание',
         )
         cls.post = Post.objects.create(
             author=cls.user,
-            text="Тестовый пост",
+            text='Тестовый пост',
         )
         cls.templates = [
-            "/",
-            f"/group/{cls.group.slug}/",
-            f"/profile/{cls.user}/",
-            f"/posts/{cls.post.id}/",
+            '/',
+            f'/group/{cls.group.slug}/',
+            f'/profile/{cls.user}/',
+            f'/posts/{cls.post.id}/',
         ]
         cls.templates_url_names = {
-            "/": "posts/index.html",
-            f"/group/{cls.group.slug}/": "posts/group_list.html",
-            f"/profile/{cls.user.username}/": "posts/profile.html",
-            f"/posts/{cls.post.id}/": "posts/post_detail.html",
-            f"/posts/{cls.post.id}/edit/": "posts/create_post.html",
-            "/create/": "posts/create_post.html",
+            '/': 'posts/index.html',
+            f'/group/{cls.group.slug}/': 'posts/group_list.html',
+            f'/profile/{cls.user.username}/': 'posts/profile.html',
+            f'/posts/{cls.post.id}/': 'posts/post_detail.html',
+            f'/posts/{cls.post.id}/edit/': 'posts/create_post.html',
+            '/create/': 'posts/create_post.html',
         }
 
     def setUp(self):
@@ -49,17 +49,17 @@ class PostURLTests(TestCase):
         self.user = User.objects.get(username=self.user)
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
-        response = self.authorized_client.get(f"/posts/{self.post.id}/edit/")
+        response = self.authorized_client.get(f'/posts/{self.post.id}/edit/')
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_create_url_redirect_anonymous_on_auth_login(self):
         """Страница /create/ доступна авторизованному пользователю."""
-        response = self.guest_client.get("/create/", follow=True)
-        self.assertRedirects(response, "/auth/login/?next=/create/")
+        response = self.guest_client.get('/create/', follow=True)
+        self.assertRedirects(response, '/auth/login/?next=/create/')
 
     def test_unexisting_page_at_desired_location(self):
         """Страница /unexisting_page/ должна выдать ошибку."""
-        response = self.guest_client.get("/unexisting_page/")
+        response = self.guest_client.get('/unexisting_page/')
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
     def test_urls_uses_correct_template(self):
