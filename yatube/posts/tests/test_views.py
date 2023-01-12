@@ -134,3 +134,39 @@ class PostPagesTests(TestCase):
                 response = self.authorized_client.get(value)
                 form_field = response.context['page_obj']
                 self.assertNotIn(expected, form_field)
+
+
+INDEX = reverse('posts:index')
+POSTS_ON_PAGE = 10
+POSTS_ON_SECOND_PAGE = 3
+POSTS_COUNT = POSTS_ON_PAGE + POSTS_ON_SECOND_PAGE
+
+
+class PaginatorViewsTest(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        user = User.objects.create_user(username='testuser')
+        for index in range(POSTS_COUNT):
+            post = f'запись номер {index}'
+            Post.objects.create(
+                text=post,
+                author=user
+            )
+
+    def setUp(self):
+        self.guest_client = Client()
+
+    def test_first_page_contains_ten_records(self):
+        response = self.client.get(INDEX)
+        self.assertEqual(
+            len(response.context.get('page_obj').object_list),
+            POSTS_ON_PAGE
+        )
+
+    def test_second_page_contains_three_records(self):
+        response = self.client.get(INDEX + '?page=2')
+        self.assertEqual(
+            len(response.context.get('page_obj').object_list),
+            POSTS_ON_SECOND_PAGE
+        )
