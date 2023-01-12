@@ -53,7 +53,7 @@ class PostURLTests(TestCase):
             with self.subTest(adress):
                 response = self.guest_client.get(adress)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
-    
+
     def test_private_url_with_guest_client(self):
         """Страницы POST_EDIT и POST_CREATE перенаправляют гостевую учетку."""
         for adress in self.templates_url_names_private:
@@ -83,7 +83,7 @@ class PostURLTests(TestCase):
             with self.subTest(url=url):
                 response = self.authorized_client.get(url)
                 self.assertTemplateUsed(response, template)
-    
+
     def test_private_urls_uses_correct_template(self):
         """Приватные URL-адреса используют соответствующие шаблоны."""
         for url, template in self.templates_url_names_private.items():
@@ -94,7 +94,10 @@ class PostURLTests(TestCase):
     def test_posts_post_id_edit_url_with_non_author_client(self):
         """Страница POST_EDIT доступна только автору."""
         self.authorized_client.force_login(self.some_user)
-        response = self.another_authorized_client.get(self.POST_EDIT, follow=True)
+        response = self.another_authorized_client.get(
+            self.POST_EDIT,
+            follow=True
+        )
         self.assertRedirects(response, self.POST_DETAIL)
 
     def test_unexisting_page_at_desired_location(self):
