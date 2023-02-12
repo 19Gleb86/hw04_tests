@@ -48,9 +48,40 @@ class Post(models.Model):
         related_name='group',
         verbose_name="Группа"
     )
+    image = models.ImageField(
+        'Картинка',
+        upload_to='posts/',
+        blank=True
+    )
 
     class Meta:
         ordering = ['-pub_date']
 
     def __str__(self):
         return self.text[:15]
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(
+        Post,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='comments'
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='comments'
+    )
+    text = models.TextField(
+        "Текст комментария",
+        help_text="Введите текст комментария"
+    )
+    created = models.DateTimeField(
+        "Дата публикации комментария",
+        auto_now_add=True
+    )
+class Follow(models.Model):
+    user = models.ForeignKey(User, on_delete=None, related_name="follower")
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="following")
