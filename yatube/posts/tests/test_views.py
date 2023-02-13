@@ -163,10 +163,11 @@ class PostPagesTests(TestCase):
         Follow.objects.get_or_create(user=self.user, author=self.post.author)
         response_1 = self.authorized_client.get(reverse('posts:follow_index'))
         self.assertEqual(len(response_1.context['page_obj']), 1)
-        """ проверка подписки у юзера-фоловера """
+        
+        """ Проверка подписки у юзера-фоловера """
         self.assertIn(self.post, response_1.context['page_obj'])
 
-        """ Проверка что пост не появился в избранных у юзера-обычного """
+        """ Проверка что пост не появился в избранных у обычного юзера """
         outsider = User.objects.create(username='NoName')
         self.authorized_client.force_login(outsider)
         response_1 = self.authorized_client.get(reverse('posts:follow_index'))
