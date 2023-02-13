@@ -27,4 +27,4 @@ class PostModelTest(TestCase):
         """Проверяем, что у моделей корректно работает __str__."""
         post = PostModelTest.post
         expected_object_length = post.text[:15]
-        self.assertEquals(expected_object_length, str(post))
+        self.assertEqual(expected_object_length, str(post))
