@@ -158,23 +158,24 @@ class PostPagesTests(TestCase):
         """ Проверяем, что страница подписок пуста """
         response = self.authorized_client.get(reverse('posts:follow_index'))
         self.assertEqual(len(response.context['page_obj']), 0)
+
         """ Проверка подписки на автора поста """
         Follow.objects.get_or_create(user=self.user, author=self.post.author)
-        r_2 = self.authorized_client.get(reverse('posts:follow_index'))
-        self.assertEqual(len(r_2.context['page_obj']), 1)
+        response_1 = self.authorized_client.get(reverse('posts:follow_index'))
+        self.assertEqual(len(response_1.context['page_obj']), 1)
         """ проверка подписки у юзера-фоловера """
-        self.assertIn(self.post, r_2.context['page_obj'])
+        self.assertIn(self.post, response_1.context['page_obj'])
 
         """ Проверка что пост не появился в избранных у юзера-обычного """
         outsider = User.objects.create(username='NoName')
         self.authorized_client.force_login(outsider)
-        r_2 = self.authorized_client.get(reverse('posts:follow_index'))
-        self.assertNotIn(self.post, r_2.context['page_obj'])
+        response_1 = self.authorized_client.get(reverse('posts:follow_index'))
+        self.assertNotIn(self.post, response_1.context['page_obj'])
 
         """ Проверка отписки от автора поста """
         Follow.objects.all().delete()
-        r_3 = self.authorized_client.get(reverse('posts:follow_index'))
-        self.assertEqual(len(r_3.context['page_obj']), 0)
+        response_2 = self.authorized_client.get(reverse('posts:follow_index'))
+        self.assertEqual(len(response_2.context['page_obj']), 0)
 
 
 INDEX = reverse('posts:index')
